@@ -67,11 +67,11 @@ namespace ReactDotNetBoiler
             }
             
             app.UseHttpsRedirection();
-
             app.UseCors(policy => policy.SetIsOriginAllowed(origin => origin == "https://accounts.google.com/"));
             app.UseAuthentication();
             app.Use(async (context, next) =>
             {
+                context.Response.Headers.Add("Content-Security-Policy", "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src * data:;");
                 if (!context.User.Identity.IsAuthenticated && context.Request.Path != "/signin-google" && context.Request.Path != "/Account/Login" & context.Request.Path != "/Account/LoginCallBack")
                 {
                     await context.ChallengeAsync("External");
@@ -84,9 +84,7 @@ namespace ReactDotNetBoiler
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            
             app.UseMvc(routes => routes.MapRoute("default", "{controller}/{action=Index}/{id?}"));
-
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
