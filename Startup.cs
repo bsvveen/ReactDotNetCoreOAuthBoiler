@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using Infrastructure;
+
 namespace ReactDotNetBoiler
 {
     public class Startup
@@ -21,28 +23,7 @@ namespace ReactDotNetBoiler
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddAuthentication(o =>
-                {
-                    o.DefaultScheme = "Application";
-                    o.DefaultSignInScheme = "External";
-                })
-                .AddCookie("Application")
-                .AddCookie("External")
-                .AddGoogle(o =>
-                {
-                    o.ClientId = Configuration["Google:ClientId"]; 
-                    o.ClientSecret = Configuration["Google:ClientSecret"]; 
-                    o.UserInformationEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
-                    o.ClaimActions.Clear();
-                    o.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-                    o.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
-                    o.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
-                    o.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
-                    o.ClaimActions.MapJsonKey("urn:google:profile", "link");
-                    o.ClaimActions.MapJsonKey("image", "picture");
-                    o.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
-                });
+            services.AddGoogleAuthentication(Configuration);                
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
